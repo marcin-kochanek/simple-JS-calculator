@@ -85,3 +85,14 @@ body {
 .btn-zero {
   flex-basis: 50%;
 }
+
+/* turn off number input spinners for Firefox (partially) and Chrom, Safari */ 
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
