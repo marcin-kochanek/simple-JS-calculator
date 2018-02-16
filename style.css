@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #5f5f5f;
+  padding: 30px 0;
+}
+
+.calculator {
+  max-width: 400px;
+  margin: 0 auto;
+  border: .1px solid #252525;
+}
+
+.calculator input {
+  background-color: #252525;
+  outline: none;
+  border: 0;
+
+  padding: 80px 10px 10px;
+  width: 100%;
+  color: #fff;
+  font-size: 80px;
+  font-weight: 100;
+  font-family: 'Roboto', sans-serif;
+  text-align: right;
+}
+
+.row {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.btn {
+  background-color: #e4e5e6;
+  border: .1px solid rgb(110, 110, 110);
+  border-bottom: 0;
+  border-left: 0;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 30px;
+  font-weight: 300;
+  cursor: pointer;
+  outline: 0;
+
+  flex: 1 0 25%;
+}
+
+.btn:active {
+  background-color: #d4d4d4;
+}
+
+.btn-top {
+  background-color: #CACBCD;
+  font-size: 22px;
+  padding: 24px;
+  text-transform: uppercase;
+}
+
+.btn-top:active {
+  background-color: #b6b6b6;
+}
+
+.btn-right {
+  background-color: #F98C11;
+  color: #fff;
+  font-size: 22px;
+  border-right: 0;
+}
+
+.btn-right:active {
+  background-color: #c96f08;
+}
+
+.btn-right:focus {
+  border: 2px solid black;
+}
+
+.btn-zero {
+  flex-basis: 50%;
+}
