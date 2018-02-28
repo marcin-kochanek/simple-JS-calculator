@@ -9,13 +9,13 @@ body {
   padding: 30px 0;
 }
 
-.calculator {
+#calculator {
   max-width: 400px;
   margin: 0 auto;
   border: .1px solid #252525;
 }
 
-.calculator input {
+#calculator input {
   background-color: #252525;
   outline: none;
   border: 0;
@@ -56,33 +56,33 @@ body {
   background-color: #d4d4d4;
 }
 
-.btn-top {
+.btn--top {
   background-color: #CACBCD;
   font-size: 22px;
   padding: 24px;
   text-transform: uppercase;
 }
 
-.btn-top:active {
+.btn--top:active {
   background-color: #b6b6b6;
 }
 
-.btn-right {
+.btn--right {
   background-color: #F98C11;
   color: #fff;
   font-size: 22px;
   border-right: 0;
 }
 
-.btn-right:active {
+.btn--right:active {
   background-color: #c96f08;
 }
 
-.btn-right:focus {
+.btn--right:focus {
   border: 2px solid black;
 }
 
-.btn-zero {
+.btn--zero {
   flex-basis: 50%;
 }
 
