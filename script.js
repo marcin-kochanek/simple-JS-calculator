@@ -1,4 +1,5 @@
 let firstNumber, secondNumber, isFirst = true, operator, clickedNumber;
+
 let outputValue = document.getElementById('result');
 const allButtons = document.querySelectorAll('.btn');
 const numberButtons = document.querySelectorAll('.btn--number');
@@ -40,11 +41,11 @@ function clickNumber() {
   
   if (isFirst || outputValue.value == "0") {
     outputValue.value = clickedNumber;
+    secondNumber = parseInt(outputValue.value);
     isFirst = false;
   } else {
     outputValue.value += clickedNumber;
     secondNumber = parseInt(outputValue.value);
-    console.log(secondNumber, clickedNumber);
   }
 }
 
@@ -54,16 +55,22 @@ function changeSign() {
 
 function calculateResult() {
   let result;
-  secondNumber = parseFloat(outputValue.value); // ustawia second jako to co wyswietla, poprzedni wynik
   
   if (operator == '+') {
     result = firstNumber + secondNumber;
+  } else if (operator == '-') {
+    result = firstNumber - secondNumber;
+  } else if (operator == '/') {
+    result = firstNumber/secondNumber;
+  } else if (operator == '*') {
+    result = firstNumber * secondNumber;
+  } else if (operator == '%') {
+    console.log('todo');
   }
 
   isFirst = true;
   firstNumber = result;
   outputValue.value = result;
-  console.log(firstNumber, secondNumber, result, clickedNumber);
 }
 
 function operatorClick() {
