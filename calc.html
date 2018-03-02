@@ -9,36 +9,36 @@
 </head>
 <body>
   <div id="calculator">
-    <input id="result" type="number" value="0" readonly>
+    <input id="result" type="text" value="0" readonly>
     <div class="calculator-buttons">
       <div class="row">
-        <button class="btn btn--top">ac</button>
-        <button class="btn btn--top">&plusmn;</button>
-        <button class="btn btn--top">&percnt;</button>
-        <button class="btn btn--right">&divide;</button>
-      </div>     
+        <button class="btn btn--top btn--clear">ac</button>
+        <button class="btn btn--top btn--plusminus">&plusmn;</button>
+        <button class="btn btn--top btn--operator" value="%">&percnt;</button>
+        <button class="btn btn--right btn--operator" value="/">&divide;</button>
+      </div>
       <div class="row">
         <button class="btn btn--number" value="7">7</button>
-        <button class="btn btn--number">8</button>
-        <button class="btn btn--number">9</button>
-        <button class="btn btn--right">&times;</button>
+        <button class="btn btn--number" value="8">8</button>
+        <button class="btn btn--number" value="9">9</button>
+        <button class="btn btn--right btn--operator" value="*">&times;</button>
       </div>
       <div class="row">
-        <button class="btn btn--number">4</button>
-        <button class="btn btn--number">5</button>
-        <button class="btn btn--number">6</button>
-        <button class="btn btn--right">&minus;</button>
+        <button class="btn btn--number" value="4">4</button>
+        <button class="btn btn--number" value="5">5</button>
+        <button class="btn btn--number" value="6">6</button>
+        <button class="btn btn--right btn--operator" value="-">&minus;</button>
       </div>
       <div class="row">
-        <button class="btn btn--number">1</button>
-        <button class="btn btn--number">2</button>
-        <button class="btn btn--number">3</button>
-        <button class="btn btn--right">&plus;</button>
+        <button class="btn btn--number" value="1">1</button>
+        <button class="btn btn--number" value="2">2</button>
+        <button class="btn btn--number" value="3">3</button>
+        <button class="btn btn--right btn--operator" value="+">&plus;</button>
       </div>
       <div class="row">
-        <button class="btn btn--zero btn--number">0</button>
-        <button class="btn">&comma;</button>
-        <button class="btn btn--right">&equals;</button>
+        <button class="btn btn--zero btn--number" value="0">0</button>
+        <button class="btn btn--dot">&middot;</button>
+        <button class="btn btn--right btn--equals">&equals;</button>
       </div>
     </div> 
   </div>
