@@ -1,11 +1,12 @@
-let firstNumber, secondNumber, isFirst = true, operator, clickedNumber;
+let firstNumber, secondNumber, isFirst = true, operator, clickedNumber, result, number;
 
-let outputValue = document.getElementById('result');
+let outputValue = document.getElementById('resultBox');
 const allButtons = document.querySelectorAll('.btn');
 const numberButtons = document.querySelectorAll('.btn--number');
 const clearButton = document.querySelector('.btn--clear');
 const dotButton = document.querySelector('.btn--dot');
 const plusMinusButton = document.querySelector('.btn--plusminus');
+const percentageButton = document.querySelector('.btn--percentage');
 const operatorButtons = document.querySelectorAll('.btn--operator');
 const resultButton = document.querySelector('.btn--equals');
 
@@ -39,46 +40,59 @@ function addDot() {
 function clickNumber() {
   clickedNumber = this.value;
   
-  if (isFirst || outputValue.value == "0") {
-    outputValue.value = clickedNumber;
-    secondNumber = parseInt(outputValue.value);
-    isFirst = false;
+  if (outputValue.value.length <= 8) {
+    if (isFirst || outputValue.value == "0") {
+      outputValue.value = clickedNumber;
+      secondNumber = parseFloat(outputValue.value);
+      isFirst = false;
+    } else {
+      outputValue.value += clickedNumber;
+      secondNumber = parseFloat(outputValue.value);
+    }
   } else {
-    outputValue.value += clickedNumber;
-    secondNumber = parseInt(outputValue.value);
+    wrongSound();
   }
+
+  console.log(firstNumber, secondNumber, result);
+}
+
+function showPercentage() {
+  outputValue.value /= 100;
 }
 
 function changeSign() {
-  outputValue.value *= -1;
+  secondNumber = outputValue.value *= -1;
+  console.log(firstNumber, secondNumber, isFirst);
 }
 
 function calculateResult() {
-  let result;
-  
+  console.log(firstNumber, secondNumber, result);
+
   if (operator == '+') {
     result = firstNumber + secondNumber;
   } else if (operator == '-') {
     result = firstNumber - secondNumber;
-  } else if (operator == '/') {
+  } else if (operator == '/' && !secondNumber == 0) {
     result = firstNumber/secondNumber;
   } else if (operator == '*') {
     result = firstNumber * secondNumber;
-  } else if (operator == '%') {
-    console.log('todo');
+  } else {
+    result = "Błąd";
   }
+  console.log(firstNumber, secondNumber, result);
 
-  isFirst = true;
   firstNumber = result;
   outputValue.value = result;
+  console.log(firstNumber, secondNumber, result);
+  isFirst = true;
 }
 
 function operatorClick() {
   operator = this.value;
 
-  firstNumber = parseInt(outputValue.value);
-  console.log(firstNumber);
+  firstNumber = parseFloat(outputValue.value);
   isFirst = true;
+  console.log(firstNumber, secondNumber, result);
 }
 
 Array.from(allButtons).forEach(btn => {
@@ -96,4 +110,5 @@ Array.from(operatorButtons).forEach(btn => {
 clearButton.addEventListener('click', clearAll);
 dotButton.addEventListener('click', addDot);
 plusMinusButton.addEventListener('click', changeSign);
+percentageButton.addEventListener('click', showPercentage);
 resultButton.addEventListener('click', calculateResult);
