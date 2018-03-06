@@ -10,6 +10,31 @@ const percentageButton = document.querySelector('.btn--percentage');
 const operatorButtons = document.querySelectorAll('.btn--operator');
 const resultButton = document.querySelector('.btn--equals');
 
+Math.decimal = function(n, k) {
+  var factor = Math.pow(10, k+1);
+
+  n = Math.round(Math.round(n*factor)/10);
+  return n/(factor/10);
+}
+
+function calculateResult() {
+  if (operator == '+') {
+    result = firstNumber + secondNumber;
+  } else if (operator == '-') {
+    result = firstNumber - secondNumber;
+  } else if (operator == '/' && !secondNumber == 0) {
+    result = firstNumber / secondNumber;
+  } else if (operator == '*') {
+    result = firstNumber * secondNumber;
+  } else if (isNaN(result)) {
+    result = "Błąd";
+  } else {
+    result = "Błąd";
+  }
+
+  result = Math.decimal(result, 8);
+}
+
 function goodSound() {
   const sound = new Audio();
   
@@ -27,6 +52,9 @@ function wrongSound() {
 function clearAll() {
   outputValue.value = 0;
   isFirst = true;
+  firstNumber = 0;
+  secondNumber = 0;
+  result = 0;
 }
 
 function addDot() {
@@ -53,7 +81,7 @@ function clickNumber() {
     wrongSound();
   }
 
-  console.log(firstNumber, secondNumber, result);
+  calculateResult()
 }
 
 function showPercentage() {
@@ -62,39 +90,33 @@ function showPercentage() {
 
 function changeSign() {
   secondNumber = outputValue.value *= -1;
-  console.log(firstNumber, secondNumber, isFirst);
+  calculateResult()
 }
 
-function calculateResult() {
-  console.log(firstNumber, secondNumber, result);
-
-  if (operator == '+') {
-    result = firstNumber + secondNumber;
-  } else if (operator == '-') {
-    result = firstNumber - secondNumber;
-  } else if (operator == '/' && !secondNumber == 0) {
-    result = firstNumber/secondNumber;
-  } else if (operator == '*') {
-    result = firstNumber * secondNumber;
-  } else {
-    result = "Błąd";
-  }
-  console.log(firstNumber, secondNumber, result);
+function showResult() {
+  calculateResult()
 
   firstNumber = result;
   outputValue.value = result;
-  console.log(firstNumber, secondNumber, result);
   isFirst = true;
 }
 
 function operatorClick() {
   operator = this.value;
 
-  firstNumber = parseFloat(outputValue.value);
+  if (isNaN(result) || result === 0) {
+    firstNumber = parseFloat(outputValue.value);
+  } else {
+    firstNumber = result;
+    outputValue.value = result;
+  }
+    
+  secondNumber = undefined;
   isFirst = true;
-  console.log(firstNumber, secondNumber, result);
 }
 
+
+// Nasłuchiwanie zdarzeń 'click'
 Array.from(allButtons).forEach(btn => {
   btn.addEventListener('click', goodSound);
 });
@@ -111,4 +133,4 @@ clearButton.addEventListener('click', clearAll);
 dotButton.addEventListener('click', addDot);
 plusMinusButton.addEventListener('click', changeSign);
 percentageButton.addEventListener('click', showPercentage);
-resultButton.addEventListener('click', calculateResult);
+resultButton.addEventListener('click', showResult);
