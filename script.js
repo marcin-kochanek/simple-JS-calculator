@@ -1,4 +1,4 @@
-let firstNumber, secondNumber, isFirst = true, operator, clickedNumber, result, number;
+let firstNumber, secondNumber, isFirst = true, operator, clickedNumber, result = 0, number;
 
 let outputValue = document.getElementById('resultBox');
 const allButtons = document.querySelectorAll('.btn');
@@ -15,24 +15,27 @@ Math.decimal = function(n, k) {
 
   n = Math.round(Math.round(n*factor)/10);
   return n/(factor/10);
-}
+};
 
 function calculateResult() {
   if (operator == '+') {
     result = firstNumber + secondNumber;
   } else if (operator == '-') {
     result = firstNumber - secondNumber;
-  } else if (operator == '/' && !secondNumber == 0) {
+  } else if (operator == '/') {
     result = firstNumber / secondNumber;
+    console.log(firstNumber, secondNumber, result);
   } else if (operator == '*') {
     result = firstNumber * secondNumber;
-  } else if (isNaN(result)) {
-    result = "Błąd";
-  } else {
-    result = "Błąd";
   }
 
   result = Math.decimal(result, 8);
+  console.log(result);
+
+  if (isNaN(result) || !isFinite(result)) {
+    result = "Błąd";
+    console.log(result);
+  }
 }
 
 function goodSound() {
@@ -58,17 +61,25 @@ function clearAll() {
 }
 
 function addDot() {
-  if (!outputValue.value.includes('.')) {
+  console.log(result);
+
+  if ((!outputValue.value.includes('.') && !isNaN(result)) || !isFinite(result)) {
     outputValue.value += '.';
+    console.log(firstNumber, secondNumber, result);
+  } else if (result == "Błąd" || secondNumber == undefined) {
+    outputValue.value = "0.";
+    isFirst = false;
   } else {
     wrongSound();
   }
+
+  console.log(result);
 }
 
 function clickNumber() {
   clickedNumber = this.value;
   
-  if (outputValue.value.length <= 8) {
+  /*if (outputValue.value.length <= 8) {*/
     if (isFirst || outputValue.value == "0") {
       outputValue.value = clickedNumber;
       secondNumber = parseFloat(outputValue.value);
@@ -77,34 +88,47 @@ function clickNumber() {
       outputValue.value += clickedNumber;
       secondNumber = parseFloat(outputValue.value);
     }
-  } else {
+  /*} else {
     wrongSound();
-  }
+  }*/
 
-  calculateResult()
+  calculateResult();
 }
 
 function showPercentage() {
-  outputValue.value /= 100;
+  if (isNaN(secondNumber)) {
+    outputValue.value = "Błąd";
+  } else {
+    secondNumber = outputValue.value /= 100;
+  }
+
+  calculateResult();
 }
 
 function changeSign() {
-  secondNumber = outputValue.value *= -1;
-  calculateResult()
+  if (isNaN(secondNumber)) {
+    secondNumber = outputValue.value = -0;
+  } else {
+    secondNumber = outputValue.value *= -1;
+  }
+
+  calculateResult();
+  console.log(secondNumber);
 }
 
 function showResult() {
-  calculateResult()
+  calculateResult();
 
   firstNumber = result;
   outputValue.value = result;
+  console.log(outputValue.value, result);
   isFirst = true;
 }
 
 function operatorClick() {
   operator = this.value;
 
-  if (isNaN(result) || result === 0) {
+  if (/*!isNaN(result) ||*/ result === 0) {
     firstNumber = parseFloat(outputValue.value);
   } else {
     firstNumber = result;
