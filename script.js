@@ -33,7 +33,7 @@ function calculateResult() {
   console.log(result);
 
   if (isNaN(result) || !isFinite(result)) {
-    result = "Błąd";
+    result = "Error";
     console.log(result);
   }
 }
@@ -66,7 +66,7 @@ function addDot() {
   if ((!outputValue.value.includes('.') && !isNaN(result)) || !isFinite(result)) {
     outputValue.value += '.';
     console.log(firstNumber, secondNumber, result);
-  } else if ((result == "Błąd" || secondNumber == undefined) && (outputValue.value !== "0.")) {
+  } else if ((result == "Error" || secondNumber == undefined) && (outputValue.value !== "0.")) {
     outputValue.value = "0.";
   } else {
     wrongSound();
@@ -99,7 +99,7 @@ function clickNumber() {
 
 function showPercentage() {
   /*if (isNaN(secondNumber)) {
-    secondNumber = outputValue.value = "Błąd";
+    secondNumber = outputValue.value = "Error";
   } else {*/
     secondNumber = outputValue.value /= 100;
 
