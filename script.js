@@ -66,13 +66,13 @@ function addDot() {
   if ((!outputValue.value.includes('.') && !isNaN(result)) || !isFinite(result)) {
     outputValue.value += '.';
     console.log(firstNumber, secondNumber, result);
-  } else if (result == "Błąd" || secondNumber == undefined) {
+  } else if ((result == "Błąd" || secondNumber == undefined) && (outputValue.value !== "0.")) {
     outputValue.value = "0.";
-    isFirst = false;
   } else {
     wrongSound();
   }
 
+  isFirst = false;
   console.log(result);
 }
 
@@ -85,7 +85,9 @@ function clickNumber() {
       secondNumber = parseFloat(outputValue.value);
       isFirst = false;
     } else {
+      console.log(outputValue.value, secondNumber, clickedNumber);
       outputValue.value += clickedNumber;
+      outputValue.value = parseFloat(outputValue.value);
       secondNumber = parseFloat(outputValue.value);
     }
   /*} else {
@@ -96,24 +98,25 @@ function clickNumber() {
 }
 
 function showPercentage() {
-  if (isNaN(secondNumber)) {
-    outputValue.value = "Błąd";
-  } else {
+  /*if (isNaN(secondNumber)) {
+    secondNumber = outputValue.value = "Błąd";
+  } else {*/
     secondNumber = outputValue.value /= 100;
-  }
 
   calculateResult();
 }
 
 function changeSign() {
-  if (isNaN(secondNumber)) {
-    secondNumber = outputValue.value = -0;
+  if (isNaN(secondNumber) || secondNumber == '0') {
+    secondNumber = outputValue.value = '-0';
   } else {
     secondNumber = outputValue.value *= -1;
+    result *= -1;
   }
 
-  calculateResult();
-  console.log(secondNumber);
+  isFirst = false;
+  //calculateResult();
+  secondNumber = secondNumber.toString();
 }
 
 function showResult() {
@@ -128,7 +131,7 @@ function showResult() {
 function operatorClick() {
   operator = this.value;
 
-  if (/*!isNaN(result) ||*/ result === 0) {
+  if (result === 0) {
     firstNumber = parseFloat(outputValue.value);
   } else {
     firstNumber = result;
