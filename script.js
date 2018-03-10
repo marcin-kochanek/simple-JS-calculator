@@ -1,4 +1,4 @@
-let firstNumber, secondNumber, isFirst = true, operator, clickedNumber, result = 0, number;
+let firstNumber, secondNumber, isFirst = true, operator, clickedNumber, result = 0, number, integerPart;
 
 let outputValue = document.getElementById('resultBox');
 const allButtons = document.querySelectorAll('.btn');
@@ -10,12 +10,73 @@ const percentageButton = document.querySelector('.btn--percentage');
 const operatorButtons = document.querySelectorAll('.btn--operator');
 const resultButton = document.querySelector('.btn--equals');
 
-Math.decimal = function(n, k) {
-  var factor = Math.pow(10, k+1);
 
-  n = Math.round(Math.round(n*factor)/10);
-  return n/(factor/10);
+//TODO: DLA DUŻYCH LICZBA POKAŻ LITERĘ EULERA Math.exp(1);
+function getResultLength(result) {
+  let stringifiedResult = Math.abs(result).toString(),
+      resultLength = 0, isNegative = 0;
+  
+  console.log(stringifiedResult);
+
+  Array.from(stringifiedResult).map(figure => {  
+    if (Number.isInteger(parseInt(figure))) {
+      resultLength++;
+    } else if (figure === '.') {
+      integerPart = stringifiedResult.indexOf(figure) + isNegative;
+    }
+  });
+}
+
+Math.decimal = function(result, k) {
+  var factor;
+ 
+  getResultLength(result);
+  
+  if (integerPart <= 8) {
+    factor = Math.pow(10, k+1-integerPart);  
+    result = Math.round(Math.round(result*factor)/10);
+    return result/(factor/10);
+  } else {
+    return result;
+  }
 };
+
+/*
+var result = 12345678.8757289688, integerPart;
+
+function getResultLength(result) {
+  let stringifiedResult = result.toString(),
+      resultLength = 0, isNegative = 0;
+  
+  Array.from(stringifiedResult).map(figure => {  
+    if (Number.isInteger(parseInt(figure))) {
+      resultLength++;
+    } else if (figure === '-') {
+      isNegative = -1;
+    } else if (figure === '.') {
+      integerPart = stringifiedResult.indexOf(figure) + isNegative;
+    }
+  });
+}
+
+Math.decimal = function(result, k) {
+  var factor;
+ 
+  getResultLength(result);
+  
+  if (integerPart <= 8) {
+    factor = Math.pow(10, k+1-integerPart);  
+    result = Math.round(Math.round(result*factor)/10);
+    return result/(factor/10);
+  } else {
+    return result;
+  }
+};
+
+console.log(Math.decimal(result, 8));
+
+//isNumber = Number.isInteger(result.toString()[i]);
+*/
 
 function calculateResult() {
   if (operator == '+') {
@@ -29,7 +90,7 @@ function calculateResult() {
     result = firstNumber * secondNumber;
   }
 
-  result = Math.decimal(result, 8);
+  result = Math.decimal(result, 9);
   console.log(result);
 
   if (isNaN(result) || !isFinite(result)) {
