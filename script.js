@@ -1,4 +1,5 @@
-let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, result = 0, number, integerPart, n, resultLength = 0;
+let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, result = 0, number, integerPart, n, numberLength = 0, isNewAction = false, x;
+
 const numberOfDisplayedFigures = 9;
 
 let outputValue = document.getElementById('resultBox');
@@ -13,54 +14,54 @@ const resultButton = document.querySelector('.btn--equals');
 
 
 //TODO: DLA DUŻYCH LICZBA POKAŻ LITERĘ EULERA Math.exp(1);
-  function getResultLength(result) {
-    let stringifiedResult = Math.abs(result).toString(),
-        isNegative = 0;
+function getNumberLength(number) {
+  const stringifiedNumber = Math.abs(number).toString(),
+      isNegative = 0;
 
-    resultLength = 0;
+  numberLength = 0;
 
-    console.log(stringifiedResult);
+  console.log(stringifiedNumber);
 
-    Array.from(stringifiedResult).map(figure => {  
-      if (Number.isInteger(parseInt(figure))) {
-        resultLength++;
-        return resultLength;
-      } else {
-        integerPart = stringifiedResult.indexOf(figure);
-        return integerPart;
-      }
-    });
-    console.log(resultLength);
-  }
-
-  Math.decimal = function(result, k) {
-    var factor;
-  
-    getResultLength(result);
-    
-    if (integerPart < numberOfDisplayedFigures) {
-      factor = Math.pow(10, k+1-integerPart);  
-      result = Math.round(Math.round(result*factor)/10);
-      return result/(factor/10);
+  Array.from(stringifiedNumber).map(figure => {  
+    if (Number.isInteger(parseInt(figure))) {
+      numberLength++;
+      return numberLength;
     } else {
-      return result;
+      integerPart = stringifiedNumber.indexOf(figure);
+      return integerPart;
     }
-  };
+  });
+  console.log(numberLength);
+}
+
+Math.decimal = function(result, k) {
+  var factor;
+
+  getNumberLength(result);
+  
+  if (integerPart < numberOfDisplayedFigures) {
+    factor = Math.pow(10, k+1-integerPart);  
+    result = Math.round(Math.round(result*factor)/10);
+    return result/(factor/10);
+  } else {
+    return result;
+  }
+};
 
 /*
 var result = 12345678.875728688, integerPart;
 
-function getResultLength(result) {
-  let stringifiedResult = result.toString(),
-      resultLength = 0, isNegative = 0;
+function getNumberLength(result) {
+  let stringifiedNumber = result.toString(),
+      numberLength = 0, isNegative = 0;
   
-  Array.from(stringifiedResult).map(figure => {  
+  Array.from(stringifiedNumber).map(figure => {  
     if (Number.isInteger(parseInt(figure))) {
-      resultLength++;
+      numberLength++;
     } else if (figure === '-') {
       isNegative = -1;
     } else if (figure === '.') {
-      integerPart = stringifiedResult.indexOf(figure) + isNegative;
+      integerPart = stringifiedNumber.indexOf(figure) + isNegative;
     }
   });
 }
@@ -68,7 +69,7 @@ function getResultLength(result) {
 Math.decimal = function(result, k) {
   var factor;
  
-  getResultLength(result);
+  getNumberLength(result);
   
   if (integerPart <= 8) {
     factor = Math.pow(10, k+1-integerPart);  
@@ -83,15 +84,24 @@ console.log(Math.decimal(result, 8));
 
 //isNumber = Number.isInteger(result.toString()[i]);
 */
-function checkResult(result) {
-  getResultLength(result);
 
-  if ((integerPart || resultLength) >= 11) {
+function clearFromZero(x) {
+  const findE = x.search('e');
+  const firstPart = parseFloat(x.substr(0, findE));
+  const secondPart = x.substr(findE);
+  
+  return firstPart+secondPart;
+}
+
+function checkResult(result) {
+  getNumberLength(result);
+
+  if (integerPart >= 11 || numberLength >= 11) {
     n = result.toExponential(4);
-    outputValue.value = n;
-  } else if ((integerPart || resultLength) == 10) {
+    outputValue.value = clearFromZero(n);
+  } else if (integerPart >= 9 || numberLength >= 9) {
     n = result.toExponential(5);
-    outputValue.value = n;
+    outputValue.value = clearFromZero(n);
   } else {
     outputValue.value = result;
   }
@@ -138,16 +148,17 @@ function clearAll() {
   firstNumber = 0;
   secondNumber = 0;
   result = 0;
-  resultLength = 0;
+  numberLength = 0;
+  integerPart = 0;
 }
 
 function addDot() {
   console.log(result);
 
-  if ((!outputValue.value.includes('.') && !isNaN(result) && secondNumber.toString().length < numberOfDisplayedFigures) || !isFinite(result)) {
+  if ((!outputValue.value.includes('.') && !isNaN(result) && secondNumber.toString().length < numberOfDisplayedFigures && isNewAction === false)|| !isFinite(result)) {
     outputValue.value += '.';
     console.log(firstNumber, secondNumber, result);
-  } else if ((result == "Error" || secondNumber == undefined) && (outputValue.value !== "0.")) {
+  } else if ((result === "Error" || secondNumber === undefined) && (outputValue.value !== "0.") || isNewAction === true) {
     outputValue.value = "0.";
   } else {
     wrongSound();
@@ -160,18 +171,20 @@ function addDot() {
 function clickNumber() {
   clickedNumber = this.value;
   
-    if (isFirst || outputValue.value == "0") {
-      outputValue.value = clickedNumber;
-      secondNumber = parseFloat(outputValue.value);
-      isFirst = false;
-    } else if (outputValue.value.length < numberOfDisplayedFigures) {
-      console.log(outputValue.value, secondNumber, clickedNumber);
-      outputValue.value += clickedNumber;
-      outputValue.value = parseFloat(outputValue.value);
-      secondNumber = parseFloat(outputValue.value);
-    } else {
-      wrongSound();
-    }
+  if (isFirst || outputValue.value == "0") {
+    outputValue.value = clickedNumber;
+    secondNumber = parseFloat(outputValue.value);
+    isFirst = false;
+  } else if (outputValue.value.length < numberOfDisplayedFigures) {
+    console.log(outputValue.value, secondNumber, clickedNumber);
+    outputValue.value += clickedNumber;
+    console.log(outputValue.value, secondNumber, clickedNumber);
+    //outputValue.value = parseFloat(outputValue.value); niepotrzebne? przez ten zapis nie wyświetla liczb typu 9.03
+    secondNumber = parseFloat(outputValue.value);
+    console.log(outputValue.value, secondNumber, clickedNumber);
+  } else {
+    wrongSound();
+  }
 
   calculateResult();
 }
@@ -183,18 +196,19 @@ function showPercentage() {
     secondNumber = outputValue.value /= 100;
 
   calculateResult();
-  checkResult(result);
 }
 
 function changeSign() {
   if (isNaN(secondNumber) || secondNumber == '0') {
     secondNumber = outputValue.value = '-0';
   } else {
+    calculateResult();
     secondNumber = outputValue.value *= -1;
     result *= -1;
     checkResult(secondNumber);
   }
 
+  //checkResult(result);
   //isFirst = false;
 
   // zastosowanie metody toString, aby wyświetlić liczbę z minusem
@@ -209,17 +223,19 @@ function showResult() {
   console.log(outputValue.value, result);
   isFirst = true;
   checkResult(result);
+  isNewAction = true;
 }
 
 function operatorClick() {
   operator = this.value;
 
-  if (result === 0) {
+  if (result === 0 || isNewAction == true) {
     firstNumber = parseFloat(outputValue.value);
+    isNewAction = false;
   } else {
     firstNumber = result;
     outputValue.value = result;
-    checkResult(result);
+    //checkResult(result);
   }
   
   //secondNumber = undefined; // potrzebne?
