@@ -96,10 +96,10 @@ function clearFromZero(x) {
 function checkResult(result) {
   getNumberLength(result);
 
-  if (integerPart >= 11 || numberLength >= 11) {
+  if (integerPart > 10 || (integerPart == undefined && numberLength > 10)) {
     n = result.toExponential(4);
     outputValue.value = clearFromZero(n);
-  } else if (integerPart >= 9 || numberLength >= 9) {
+  } else if (integerPart > 9 || (integerPart == undefined && numberLength > 9)) {
     n = result.toExponential(5);
     outputValue.value = clearFromZero(n);
   } else {
@@ -150,6 +150,7 @@ function clearAll() {
   result = 0;
   numberLength = 0;
   integerPart = 0;
+  isNewAction = false;
 }
 
 function addDot() {
