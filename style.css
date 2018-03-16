@@ -5,26 +5,32 @@
 }
 
 body {
-  background-color: #5f5f5f;
+  background-image: linear-gradient(to right bottom, #857EE8 35%, /*#79A5EF 48%, #6BCBF9 58%,*/ #80D8FD 85%);
   padding: 30px 0;
+  height: 100vh;
 }
 
 #calculator {
   max-width: 400px;
   margin: 0 auto;
   border: .1px solid #252525;
+  border-radius: 15px;
+  -webkit-box-shadow: 5px 10px 30px 0px rgba(59, 59, 59, 0.5);
+  -moz-box-shadow: 5px 10px 30px 0px rgba(59, 59, 59, 0.5);
+  box-shadow: 5px 10px 30px 0px rgba(59, 59, 59, 0.5);
 }
 
 #calculator input {
-  background-color: #252525;
+  background-color: #fff;
   outline: none;
   border: 0;
-
-  padding: 80px 9px 9px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 80px 7.5px 7.5px;
   width: 100%;
-  color: #fff;
+  color: #000;
   font-size: 70px;
-  font-weight: 100;
+  font-weight: 300;
   font-family: 'Roboto', sans-serif;
   text-align: right;
 }
@@ -38,13 +44,15 @@ body {
 }
 
 .btn {
-  background-color: #e4e5e6;
-  border: .1px solid rgb(110, 110, 110);
-  border-bottom: 0;
-  border-left: 0;
+  position: relative;
+  vertical-align: top;
+  background-color: #f1f3f5;
+  border: .1px solid rgb(207, 205, 205);
+  border-top: 0;
+  border-right: 0;
   padding: 20px;
   font-family: 'Roboto', sans-serif;
-  font-size: 30px;
+  font-size: 33px;
   font-weight: 300;
   cursor: pointer;
   outline: 0;
@@ -53,37 +61,58 @@ body {
 }
 
 .btn:active {
-  background-color: #d4d4d4;
+  background-color: #e7e6e6;
+  top: 2px;
 }
 
 .btn--top {
-  background-color: #CACBCD;
-  font-size: 22px;
-  padding: 24px;
+  background-color: #DFDAF2;
+  font-size: 20px;
+  padding: 25px;
   text-transform: uppercase;
+  border-top: .1px solid rgb(207, 205, 205);
 }
 
 .btn--top:active {
-  background-color: #b6b6b6;
+  background-color: #d6d5d5;
+}
+
+.btn--clear {
+  color: #F8376F;
+  font-weight: 700;
 }
 
 .btn--right {
-  background-color: #F98C11;
+  background-color: rgba(5, 192, 255, 0.5);
   color: #fff;
-  font-size: 22px;
+  font-size: 20px;
+  border: 0.1px solid #6BCBF9;
   border-right: 0;
+  border-top: 0;
 }
 
 .btn--right:active {
-  background-color: #c96f08;
+  background-color: #f8af27;
 }
 
 .btn--right:focus {
-  border: 2px solid black;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  
 }
 
 .btn--zero {
   flex-basis: 50%;
+  /*border-top: .1px solid rgb(207, 205, 205);*/
+  border-bottom-left-radius: 15px;
+}
+
+.btn--dot {
+  border-bottom: 0;
+}
+
+.btn--equals {
+  border-top: 0.1px solid #6BCBF9;
+  border-bottom-right-radius: 15px;
 }
 
 /* turn off number input spinners for Firefox (partially) and Chrom, Safari */ 
