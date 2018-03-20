@@ -1,5 +1,4 @@
-let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, result = 0, number, integerPart, n, numberLength = 0, isNewAction = false, x;
-
+let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, result = 0, number, integerPart, n, numberLength = 0, isNewAction = false, x, equalButton, isNumberClicked;
 const numberOfDisplayedFigures = 9;
 
 let outputValue = document.getElementById('resultBox');
@@ -101,10 +100,10 @@ function clearFromZero(x) {
 function checkResult(result) {
   getNumberLength(result);
 
-  if (integerPart >= 10 || (integerPart == undefined && numberLength > 10)) {
+  if (integerPart >= 10 || (integerPart == undefined && numberLength >= 10)) {
     n = result.toExponential(4);
     outputValue.value = clearFromZero(n);
-  } else if (integerPart >= 9 || (integerPart == undefined && numberLength > 9)) {
+  } else if (integerPart >= 9 || (integerPart == undefined && numberLength >= 9)) {
     n = result.toExponential(5);
     outputValue.value = clearFromZero(n);
  /* } else if (integerPart >= 1) {
@@ -119,9 +118,8 @@ function calculateResult() {
     result = firstNumber + secondNumber;
   } else if (operator == '-') {
     result = firstNumber - secondNumber;
-  } else if (operator == '/') {
+  } else if (operator == ':') {
     result = firstNumber / secondNumber;
-    console.log(firstNumber, secondNumber, result);
   } else if (operator == '*') {
     result = firstNumber * secondNumber;
   } else {
@@ -129,30 +127,22 @@ function calculateResult() {
   }
 
   result = Math.decimal(result, numberOfDisplayedFigures);
-  console.log(result);
 
   if (isNaN(result) || !isFinite(result)) {
     result = "Error";
-    console.log(result);
   }
 }
 
-function goodSound() {
+function playSound(isOk) {
   const sound = new Audio();
   
-  sound.src = "./tink.wav";
-  sound.play();
-}
-
-function wrongSound() {
-  const sound = new Audio();
-  
-  sound.src = "./wrong.wav";
+  isOk ? (sound.src = "./tink.wav") : (sound.src = "./wrong.wav");
   sound.play();
 }
 
 function clearAll() {
   outputValue.value = 0;
+  outputNumbers.value = 0;
   isFirst = true;
   firstNumber = 0;
   secondNumber = 0;
@@ -170,7 +160,7 @@ function addDot() {
   } else if ((result === "Error" || secondNumber === undefined || outputValue.value !== "0.") && isFirst/*isNewAction*/) {
     outputValue.value = "0.";
   } else {
-    wrongSound();
+    playSound(false);
   }
 
   isFirst = false;
@@ -179,10 +169,6 @@ function addDot() {
 
 function clickNumber() {
   clickedNumber = this.value;
-
-  if (clickedNumber === undefined && (event.key >= '0' && event.key <= '9')) {
-    clickedNumber = event.key;
-  }
 
   if (isFirst || outputValue.value === "0") {
     outputValue.value = clickedNumber;
@@ -194,20 +180,18 @@ function clickNumber() {
     secondNumber = parseFloat(outputValue.value);
     isFirst = false;
   } else if (outputValue.value.length < numberOfDisplayedFigures) {
-    console.log(outputValue.value, secondNumber, clickedNumber);
     outputValue.value += clickedNumber;
-    console.log(outputValue.value, secondNumber, clickedNumber);
     !outputValue.value.includes('.') ? outputValue.value = parseFloat(outputValue.value) : '';
     //outputValue.value < 0 ? outputValue.value = Math.abs(outputValue.value)*-1 : outputValue.value = parseFloat(outputValue.value);
     //outputValue.value = parseFloat(outputValue.value);
     secondNumber = parseFloat(outputValue.value);
     //secondNumber = outputValue.value;
-    console.log(outputValue.value, secondNumber, clickedNumber);
   } else {
-    wrongSound();
+    playSound(false);
   }
 
   calculateResult();
+  isNumberClicked = true;
 }
 
 function showPercentage() {
@@ -217,7 +201,7 @@ function showPercentage() {
     secondNumber = outputValue.value /= 100;
 
   calculateResult();
-  checkResult(result); //
+  checkResult(secondNumber); // czy checkResult(result)
   isFirst = false;
 }
 
@@ -256,6 +240,7 @@ function changeSign() {
 }
 
 function showResult() {
+  equalButton = this.value;
   calculateResult();
 
   firstNumber = result;
@@ -263,20 +248,23 @@ function showResult() {
   checkResult(result);
   isFirst = true;
   isNewAction = true;
+
   showResultNumber();
+  isNumberClicked = true;
 }
 
 function operatorClick() {
+  showResultNumber();
   operator = this.value;
 
   if (result === 0 || isNewAction) {
     firstNumber = parseFloat(outputValue.value);
     isNewAction = false;
+    outputNumbers.value = firstNumber;
   } else {
     firstNumber = result;
     //outputValue.value = result;
     checkResult(result);
-    showResultNumber();
   }
 
   //secondNumber = undefined; // potrzebne do warunku w funckji change Sign?
@@ -285,26 +273,30 @@ function operatorClick() {
 }
 
 function showResultNumber() {
-  console.log(operator);
+  const lastSign = [...outputNumbers.value][[...outputNumbers.value].length-1];
+  console.log(operator, lastSign);
 
   //outputNumbers.value += secondNumber;
 
-  if (operator !== undefined && isNewAction === false) {
-    outputNumbers.value += ` ${secondNumber}`;
-    outputNumbers.value += ` ${operator} `;
-  } else if (!isNaN(outputNumbers.value.slice(-2, -1))) {
-    outputNumbers.value += ` ${operator}`;
-    outputNumbers.value += ` ${secondNumber}`;
-  } else {
-    outputNumbers.value += ` ${secondNumber}`;
+  if (isNumberClicked) {
+    if (firstNumber === 0 || (equalButton === "=" && isNaN(lastSign))) {
+      outputNumbers.value += ` ${secondNumber}`;
+    } else if ((operator !== undefined && !isNaN(lastSign))) {
+      outputNumbers.value += ` ${operator}`;
+      outputNumbers.value += ` ${secondNumber}`;
+    } else {
+      outputNumbers.value += ` ${secondNumber}`;
+      outputNumbers.value += ` ${operator}`;
+    }
   }
-
+  isNumberClicked = false;
   //outputNumbers.value.slice((secondNumber.toString().length*-1), -1)
+  //&& Number.isInteger(outputNumbers.value.slice((secondNumber.toString().length*-1)))
 }
 
 // Nasłuchiwanie zdarzeń 'click'
 Array.from(allButtons).forEach(btn => {
-  btn.addEventListener('click', goodSound);
+  btn.addEventListener('click', playSound, true);
 });
 
 Array.from(numberButtons).forEach(btn => {
@@ -320,5 +312,3 @@ dotButton.addEventListener('click', addDot);
 plusMinusButton.addEventListener('click', changeSign);
 percentageButton.addEventListener('click', showPercentage);
 resultButton.addEventListener('click', showResult);
-
-document.addEventListener('keydown', clickNumber());
