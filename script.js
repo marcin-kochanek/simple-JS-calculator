@@ -3,6 +3,7 @@ let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, 
 const numberOfDisplayedFigures = 9;
 
 let outputValue = document.getElementById('resultBox');
+let outputNumbers = document.getElementById('resultNumbers');
 const allButtons = document.querySelectorAll('.btn');
 const numberButtons = document.querySelectorAll('.btn--number');
 const clearButton = document.querySelector('.btn--clear');
@@ -38,12 +39,13 @@ Math.decimal = function(result, k) {
   console.log(result);
   
   ///TODO: popraw dla dzielenia
-  if (integerPart < numberOfDisplayedFigures) {
+  if (integerPart < numberOfDisplayedFigures && numberLength >= numberOfDisplayedFigures) {
     console.log(`result:${result}`);
     factor = Math.pow(10, k+1-integerPart);
     console.log(`factor:${factor}`);
-    result = Math.round(Math.round(result*factor)/10);
+    result = Math.round(Math.round((result)*factor)/10);
     console.log(`result:${result}`);
+    console.log(`return: ${result/(factor/10)}`);
     return result/(factor/10);
   } else {
     console.log(`result:${result}`);
@@ -99,12 +101,14 @@ function clearFromZero(x) {
 function checkResult(result) {
   getNumberLength(result);
 
-  if (integerPart > 10 || (integerPart == undefined && numberLength > 10)) {
+  if (integerPart >= 10 || (integerPart == undefined && numberLength > 10)) {
     n = result.toExponential(4);
     outputValue.value = clearFromZero(n);
-  } else if (integerPart > 9 || (integerPart == undefined && numberLength > 9)) {
+  } else if (integerPart >= 9 || (integerPart == undefined && numberLength > 9)) {
     n = result.toExponential(5);
     outputValue.value = clearFromZero(n);
+ /* } else if (integerPart >= 1) {
+    outputValue.value = clearFromZero(result);*/
   } else {
     outputValue.value = result;
   }
@@ -175,7 +179,11 @@ function addDot() {
 
 function clickNumber() {
   clickedNumber = this.value;
-  
+
+  if (clickedNumber === undefined && (event.key >= '0' && event.key <= '9')) {
+    clickedNumber = event.key;
+  }
+
   if (isFirst || outputValue.value === "0") {
     outputValue.value = clickedNumber;
     secondNumber = parseFloat(outputValue.value);
@@ -226,15 +234,18 @@ function changeSign() {
     checkResult(secondNumber);
   }*/
   } else {
-    if (outputValue.value.includes('-')) {
+    if (outputValue.value.charAt(0) === '-') {
       outputValue.value = outputValue.value.slice(1);
+      //outputNumbers.value = outputNumbers.value.slice(2, -1);
     } else {
       outputValue.value = '-'.concat(outputValue.value);
+      //outputNumbers.value = '-('.concat(outputNumbers.value, ')');
     }
 
     secondNumber = parseFloat(outputValue.value);
     calculateResult();
     checkResult(secondNumber);
+    //checkResult(result);
   }
   
   //checkResult(result);
@@ -252,6 +263,7 @@ function showResult() {
   checkResult(result);
   isFirst = true;
   isNewAction = true;
+  showResultNumber();
 }
 
 function operatorClick() {
@@ -264,11 +276,30 @@ function operatorClick() {
     firstNumber = result;
     //outputValue.value = result;
     checkResult(result);
+    showResultNumber();
   }
 
   //secondNumber = undefined; // potrzebne do warunku w funckji change Sign?
   secondNumber = result;
   isFirst = true;
+}
+
+function showResultNumber() {
+  console.log(operator);
+
+  //outputNumbers.value += secondNumber;
+
+  if (operator !== undefined && isNewAction === false) {
+    outputNumbers.value += ` ${secondNumber}`;
+    outputNumbers.value += ` ${operator} `;
+  } else if (!isNaN(outputNumbers.value.slice(-2, -1))) {
+    outputNumbers.value += ` ${operator}`;
+    outputNumbers.value += ` ${secondNumber}`;
+  } else {
+    outputNumbers.value += ` ${secondNumber}`;
+  }
+
+  //outputNumbers.value.slice((secondNumber.toString().length*-1), -1)
 }
 
 // Nasłuchiwanie zdarzeń 'click'
@@ -289,3 +320,5 @@ dotButton.addEventListener('click', addDot);
 plusMinusButton.addEventListener('click', changeSign);
 percentageButton.addEventListener('click', showPercentage);
 resultButton.addEventListener('click', showResult);
+
+document.addEventListener('keydown', clickNumber());
