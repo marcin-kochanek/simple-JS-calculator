@@ -220,9 +220,6 @@ button[value=":"] {
 }
 
 .btn--equals {
-  /*border-top: 0.1px solid #6BCBF9;
-  background-color: #ff966c;
-  background-color: #eec2b3;*/
   border-bottom-right-radius: 10px;
 }
 
