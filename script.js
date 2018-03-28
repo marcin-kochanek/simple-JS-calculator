@@ -1,230 +1,264 @@
-let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, result = 0, number, integerPart, n, numberLength = 0, isNewAction = false, x, equalButton, isNumberClicked;
-const numberOfDisplayedFigures = 9;
+const MAIN_MODULE = (function() {
+  let firstNumber = 0, secondNumber = 0, isFirst = true, operator, clickedNumber, result = 0, number, integerPart, n, numberLength = 0, isNewAction = false, x, equalButton, isNumberClicked;
+  const numberOfDisplayedFigures = 9;
 
-let outputValue = document.getElementById('resultBox');
-let outputNumbers = document.getElementById('resultNumbers');
-const allButtons = document.querySelectorAll('.btn');
-const numberButtons = document.querySelectorAll('.btn--number');
-const clearButton = document.querySelector('.btn--clear');
-const dotButton = document.querySelector('.btn--dot');
-const plusMinusButton = document.querySelector('.btn--plusminus');
-const percentageButton = document.querySelector('.btn--percentage');
-const operatorButtons = document.querySelectorAll('.btn--operator');
-const resultButton = document.querySelector('.btn--equals');
+  let outputValue = document.getElementById('resultBox');
+  let outputNumbers = document.getElementById('resultNumbers');
 
-function getNumberLength(number) {
-  const stringifiedNumber = Math.abs(number).toString();
+  const getNumberLength = function(number) {
+    const stringifiedNumber = Math.abs(number).toString();
+    numberLength = 0;
 
-  numberLength = 0;
+    Array.from(stringifiedNumber).map(figure => {  
+      if (Number.isInteger(parseInt(figure))) {
+        numberLength++;
+        return numberLength;
+      } else {
+        integerPart = stringifiedNumber.indexOf(figure);
+        return integerPart;
+      }
+    });
+  };
 
-  Array.from(stringifiedNumber).map(figure => {  
-    if (Number.isInteger(parseInt(figure))) {
-      numberLength++;
-      return numberLength;
+  Math.decimal = function(result, k) {
+    let factor;
+
+    getNumberLength(result);
+    
+    if (integerPart <= numberOfDisplayedFigures && numberLength >= numberOfDisplayedFigures) {
+      factor = Math.pow(10, k+1-integerPart);
+      result = Math.round(Math.round((result)*factor)/10);
+      return result/(factor/10);
     } else {
-      integerPart = stringifiedNumber.indexOf(figure);
-      return integerPart;
+      return result;
     }
-  });
-}
+  };
 
-Math.decimal = function(result, k) {
-  var factor;
+  const clearFromZero = function(x) {
+    const findE = x.search('e');
+    const firstPart = parseFloat(x.substr(0, findE));
+    const secondPart = x.substr(findE);
+    
+    return firstPart+secondPart;
+  };
 
-  getNumberLength(result);
-  
-  if (integerPart < numberOfDisplayedFigures && numberLength >= numberOfDisplayedFigures) {
-    factor = Math.pow(10, k+1-integerPart);
-    result = Math.round(Math.round((result)*factor)/10);
-    return result/(factor/10);
-  } else {
+  const checkResult = function(result) {
+    getNumberLength(result);
+
+    if (integerPart >= 11 || /*(integerPart !== undefined &&*/ numberLength >= 11) {
+      n = result.toExponential(4);
+      result = clearFromZero(n);
+    } else if (integerPart > 9 || /*(integerPart !== undefined &&*/ numberLength > 9) {
+      n = result.toExponential(5);
+      result = clearFromZero(n);
+    } /*else {
+      outputValue.value = result;
+    }*/
+
     return result;
-  }
-};
+  };
 
-function clearFromZero(x) {
-  const findE = x.search('e');
-  const firstPart = parseFloat(x.substr(0, findE));
-  const secondPart = x.substr(findE);
-  
-  return firstPart+secondPart;
-}
+  const  calculateResult = function() {
+    if (operator == '+') {
+      result = firstNumber + secondNumber;
+    } else if (operator == '-') {
+      result = firstNumber - secondNumber;
+    } else if (operator == ':') {
+      result = firstNumber / secondNumber;
+    } else if (operator == '*') {
+      result = firstNumber * secondNumber;
+    } /*else {
+      result = secondNumber;
+    }*/
 
-function checkResult(result) {
-  getNumberLength(result);
+    result = Math.decimal(result, numberOfDisplayedFigures);
 
-  if (integerPart >= 10 || (integerPart == undefined && numberLength >= 10)) {
-    n = result.toExponential(4);
-    outputValue.value = clearFromZero(n);
-  } else if (integerPart >= 9 || (integerPart == undefined && numberLength >= 9)) {
-    n = result.toExponential(5);
-    outputValue.value = clearFromZero(n);
-  } else {
-    outputValue.value = result;
-  }
-}
+    if (isNaN(result) || !isFinite(result)) {
+      result = "Error";
+    }
+  };
 
-function calculateResult() {
-  if (operator == '+') {
-    result = firstNumber + secondNumber;
-  } else if (operator == '-') {
-    result = firstNumber - secondNumber;
-  } else if (operator == ':') {
-    result = firstNumber / secondNumber;
-  } else if (operator == '*') {
-    result = firstNumber * secondNumber;
-  } else {
-    result = secondNumber;
-  }
+  const playSound = function(isOk) {
+    const sound = new Audio();
+    
+    isOk ? (sound.src = "./tink.wav") : (sound.src = "./wrong.wav");
+    sound.play();
+  };
 
-  result = Math.decimal(result, numberOfDisplayedFigures);
+  const clearAll = function() {
+    outputValue.value = 0;
+    outputNumbers.value = 0;
+    isFirst = true;
+    firstNumber = 0;
+    secondNumber = 0;
+    result = 0;
+    numberLength = 0;
+    integerPart = 0;
+  };
 
-  if (isNaN(result) || !isFinite(result)) {
-    result = "Error";
-  }
-}
-
-function playSound(isOk) {
-  const sound = new Audio();
-  
-  isOk ? (sound.src = "./tink.wav") : (sound.src = "./wrong.wav");
-  sound.play();
-}
-
-function clearAll() {
-  outputValue.value = 0;
-  outputNumbers.value = 0;
-  isFirst = true;
-  firstNumber = 0;
-  secondNumber = 0;
-  result = 0;
-  numberLength = 0;
-  integerPart = 0;
-}
-
-function addDot() {
-  if ((!outputValue.value.includes('.') && !isNaN(result) && (secondNumber.toString().length < numberOfDisplayedFigures) && !isFirst) || !isFinite(result)) {
-    outputValue.value += '.';
-  } else if ((result === "Error" || secondNumber === undefined || outputValue.value !== "0.") && isFirst/*isNewAction*/) {
-    outputValue.value = "0.";
-  } else {
-    playSound(false);
-  }
-
-  isFirst = false;
-}
-
-function clickNumber() {
-  clickedNumber = this.value;
-
-  if (isFirst || outputValue.value === "0") {
-    outputValue.value = clickedNumber;
-    secondNumber = parseFloat(outputValue.value);
-    isFirst = false;
-  } else if ((outputValue.value === "-0" && clickedNumber === "0")) {
-    outputValue.value = "-0";
-    secondNumber = parseFloat(outputValue.value);
-    isFirst = false;
-  } else if (outputValue.value.length < numberOfDisplayedFigures) {
-    outputValue.value += clickedNumber;
-    !outputValue.value.includes('.') ? outputValue.value = parseFloat(outputValue.value) : '';
-    secondNumber = parseFloat(outputValue.value);
-  } else {
-    playSound(false);
-  }
-
-  calculateResult();
-  isNumberClicked = true;
-}
-
-function showPercentage() {
-  secondNumber = outputValue.value /= 100;
-
-  calculateResult();
-  checkResult(secondNumber); // czy checkResult(result)
-  isFirst = false;
-}
-
-function changeSign() {
-  if (isNaN(secondNumber) || secondNumber == '0' || (!isNewAction && isFirst)) {
-    secondNumber = outputValue.value = '-0';
-    isFirst = false;
-  } else {
-    if (outputValue.value.charAt(0) === '-') {
-      outputValue.value = outputValue.value.slice(1);
+  const addDot = function() {
+    if ((!outputValue.value.includes('.') && !isNaN(result) && (secondNumber.toString().length < numberOfDisplayedFigures) && !isFirst) || !isFinite(result)) {
+      outputValue.value += '.';
+    } else if ((result === "Error" || secondNumber === undefined || outputValue.value !== "0.") && isFirst) {
+      outputValue.value = "0.";
     } else {
-      outputValue.value = '-'.concat(outputValue.value);
+      playSound(false);
     }
 
-    secondNumber = parseFloat(outputValue.value);
+    isFirst = false;
+  };
+
+  const clickNumber = function() {
+    clickedNumber = this.value;
+
+    if (isFirst || outputValue.value === "0") {
+      outputValue.value = clickedNumber;
+      secondNumber = parseFloat(outputValue.value);
+      isFirst = false;
+    } else if ((outputValue.value === "-0" && clickedNumber === "0")) {
+      outputValue.value = "-0";
+      secondNumber = parseFloat(outputValue.value);
+      isFirst = false;
+    } else if ((outputValue.value.length < numberOfDisplayedFigures && !outputValue.value.includes('.')) || ((outputValue.value.length - 1) < numberOfDisplayedFigures && outputValue.value.includes('.'))) {
+      outputValue.value += clickedNumber;
+      !outputValue.value.includes('.') ? outputValue.value = parseFloat(outputValue.value) : '';
+      secondNumber = parseFloat(outputValue.value);
+    } else {
+      playSound(false);
+    }
+
     calculateResult();
-    checkResult(secondNumber);
-  }
-}
+    isNumberClicked = true;
+  };
 
-function showResult() {
-  equalButton = this.value;
-  calculateResult();
+  const showPercentage = function() {
+    secondNumber = outputValue.value /= 100;
 
-  firstNumber = result;
-  outputValue.value = result;
-  checkResult(result);
-  isFirst = true;
-  isNewAction = true;
+    calculateResult();
+    result = checkResult(secondNumber);
+    outputValue.value = result; // czy checkResult(result)
+    isFirst = false;
+  };
 
-  showResultNumber();
-  isNumberClicked = true;
-}
+  const changeSign = function() {
+    if (isNaN(secondNumber) || secondNumber == '0' || (!isNewAction && isFirst)) {
+      secondNumber = outputValue.value = '-0';
+      isFirst = false;
+    } else if (isNewAction) {
+      firstNumber *= -1;
 
-function operatorClick() {
-  showResultNumber();
-  operator = this.value;
-
-  if (result === 0 || isNewAction) {
-    firstNumber = parseFloat(outputValue.value);
-    isNewAction = false;
-    outputNumbers.value = firstNumber;
-  } else {
-    firstNumber = result;
-    checkResult(result);
-  }
-
-  secondNumber = result;
-  isFirst = true;
-}
-
-function showResultNumber() {
-  const lastSign = [...outputNumbers.value][[...outputNumbers.value].length-1];
-
-  if (isNumberClicked) {
-    if (firstNumber === 0 || (equalButton === "=" && isNaN(lastSign))) {
-      outputNumbers.value += ` ${secondNumber}`;
-    } else if ((operator !== undefined && !isNaN(lastSign))) {
-      outputNumbers.value += ` ${operator}`;
-      outputNumbers.value += ` ${secondNumber}`;
+      if (outputValue.value.charAt(0) === '-') {
+        outputValue.value = outputValue.value.slice(1);
+        outputNumbers.value = outputNumbers.value.slice(4);
+      } else {
+        outputValue.value = '-'.concat(outputValue.value);
+        outputNumbers.value = '-1 *'.concat(outputNumbers.value);
+      }
     } else {
-      outputNumbers.value += ` ${secondNumber}`;
-      outputNumbers.value += ` ${operator}`;
+      secondNumber *= -1;
+
+      if (outputValue.value.charAt(0) === '-') {
+        outputValue.value = outputValue.value.slice(1);
+      } else {
+        outputValue.value = '-'.concat(outputValue.value);
+      }
     }
-  }
-  isNumberClicked = false;
-}
 
-// Nasłuchiwanie zdarzeń 'click'
-Array.from(allButtons).forEach(btn => {
-  btn.addEventListener('click', playSound, true);
+    checkResult(result);
+    calculateResult();
+  };
+
+  const showResult = function() {
+    equalButton = this.value;
+
+    calculateResult();
+
+    firstNumber = result;
+    //outputValue.value = result;
+    result = checkResult(result);
+    outputValue.value = result;
+    isFirst = true;
+    isNewAction = true;
+
+    showResultNumber();
+    isNumberClicked = true;
+  };
+
+  const operatorClick = function() {
+    showResultNumber();
+    operator = this.value;
+
+    if (result === 0 || isNewAction) {
+      firstNumber = parseFloat(outputValue.value);
+      isNewAction = false;
+      outputNumbers.value = firstNumber;
+    } else {
+      firstNumber = result;
+      result = checkResult(result);
+      outputValue.value = result;
+    }
+
+    secondNumber = result;
+    isFirst = true;
+  };
+
+  const showResultNumber = function() {
+    const lastSign = [...outputNumbers.value][[...outputNumbers.value].length-1];
+
+    if (isNumberClicked) {
+      if (firstNumber === 0 || (equalButton === "=" && isNaN(lastSign))) {
+        outputNumbers.value += ` ${secondNumber}`;
+      } else if ((operator !== undefined && !isNaN(lastSign))) {
+        outputNumbers.value += ` ${operator}`;
+        outputNumbers.value += ` ${secondNumber}`;
+      } else {
+        outputNumbers.value += ` ${secondNumber}`;
+        outputNumbers.value += ` ${operator}`;
+      }
+    }
+
+    isNumberClicked = false;
+  };
+
+  const bindEvents = function() {
+    const allButtons = document.querySelectorAll('.btn');
+    const numberButtons = document.querySelectorAll('.btn--number');
+    const clearButton = document.querySelector('.btn--clear');
+    const dotButton = document.querySelector('.btn--dot');
+    const plusMinusButton = document.querySelector('.btn--plusminus');
+    const percentageButton = document.querySelector('.btn--percentage');
+    const operatorButtons = document.querySelectorAll('.btn--operator');
+    const resultButton = document.querySelector('.btn--equals');
+
+    // Nasłuchiwanie zdarzeń 'click'
+    Array.from(allButtons).forEach(btn => {
+      btn.addEventListener('click', playSound, true);
+    });
+
+    Array.from(numberButtons).forEach(btn => {
+      btn.addEventListener('click', clickNumber);
+    });
+
+    Array.from(operatorButtons).forEach(btn => {
+      btn.addEventListener('click', operatorClick);
+    });
+
+    clearButton.addEventListener('click', clearAll);
+    dotButton.addEventListener('click', addDot);
+    plusMinusButton.addEventListener('click', changeSign);
+    percentageButton.addEventListener('click', showPercentage);
+    resultButton.addEventListener('click', showResult);
+  };
+
+  const init = function() {
+    bindEvents();
+  };
+
+  return {
+    init: init
+  };
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  MAIN_MODULE.init();
 });
-
-Array.from(numberButtons).forEach(btn => {
-  btn.addEventListener('click', clickNumber);
-});
-
-Array.from(operatorButtons).forEach(btn => {
-  btn.addEventListener('click', operatorClick);
-});
-
-clearButton.addEventListener('click', clearAll);
-dotButton.addEventListener('click', addDot);
-plusMinusButton.addEventListener('click', changeSign);
-percentageButton.addEventListener('click', showPercentage);
-resultButton.addEventListener('click', showResult);
